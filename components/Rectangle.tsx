@@ -7,23 +7,15 @@ interface RectangleProps {
 }
 
 const Rectangle: React.FC<RectangleProps> = ({ children, style }) => {
-    return (
-        <View
-            style={[
-                {
-                    borderWidth: 1,
-                    borderColor: "black",
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                },
-                style,
-            ]}
-        >
-            {children}
-        </View>
-    );
+    return <View style={[styles.container, style]}>{children}</View>;
 };
 
 export default Rectangle;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        backgroundColor: "green",
+    },
+});

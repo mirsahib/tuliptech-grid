@@ -1,72 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Button,
-    Pressable,
     Text,
     TextInput,
     View,
-    ViewStyle,
+    StyleSheet,
+    Pressable,
+    Clipboard,
+    Alert,
 } from "react-native";
+import { Rectangle, Grid } from "./components";
+import { getRandomColor } from "./utils/randomColor";
 
-// Props for the Rectangle component
-interface RectangleProps {
-    children?: React.ReactNode;
-    style?: ViewStyle;
-}
-
-// Custom Rectangle component representing the main rectangle
-const Rectangle: React.FC<RectangleProps> = ({ children, style }) => {
-    return (
-        <View
-            style={[
-                {
-                    // borderWidth: 2,
-                    // borderColor: "black",
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                    backgroundColor: "green",
-                },
-                style,
-            ]}
-        >
-            {children}
-        </View>
-    );
-};
-
-// Props for the Grid component
-interface GridProps {
-    width: number;
-    height: number;
-    color?: string;
-    onTouch: (color: string) => void;
-}
-
-// Custom Grid component representing a small rectangle
-const Grid: React.FC<GridProps> = ({ width, height, color, onTouch }) => {
-    const handleTouch = () => {
-        onTouch(color || "");
-    };
-
-    return (
-        <Pressable onPressIn={handleTouch}>
-            <View style={{ width, height, backgroundColor: color }} />
-        </Pressable>
-    );
-};
-
-// Main App component
 const App: React.FC = () => {
-    // Define the size of the main rectangle
+    // set the size of the main rectangle
     const rectangleWidth: number = 300;
     const rectangleHeight: number = 400;
-    // Define the minimum cell width and height
+    // set the minimum cell width and height
     const minCellWidth = 10;
     const minCellHeight = 10;
 
-    // Define the width and height of each grid cell
+    // set the width and height of each grid cell
     const [cellWidth, setCellWidth] = useState<string>("10");
     const [cellHeight, setCellHeight] = useState<string>("10");
+
     // Error message state
     const [errorMessage, setErrorMessage] = useState<string>("");
 
@@ -76,12 +33,18 @@ const App: React.FC = () => {
     const [selectedColor, setSelectedColor] = useState<string>("");
 
     // Function to generate a random color
-    const getRandomColor = () => {
-        return "#" + Math.floor(Math.random() * 16777215).toString(16);
-    };
+
     // Handle grid touch
     const handleTouch = (color: string) => {
         setSelectedColor(color);
+    };
+
+    const copyToClipboard = () => {
+        Clipboard.setString(selectedColor);
+        Alert.alert(
+            "Copied to Clipboard",
+            `Color ${selectedColor} copied to clipboard.`
+        );
     };
 
     // Handle submit button press
@@ -118,7 +81,6 @@ const App: React.FC = () => {
         for (let i = 0; i < numRow; i++) {
             for (let j = 0; j < numCol; j++) {
                 const color = getRandomColor();
-
                 newGrid.push(
                     <Grid
                         key={`${i}-${j}`}
@@ -134,29 +96,17 @@ const App: React.FC = () => {
     };
 
     return (
-        <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-            <View style={{ flexDirection: "row", marginBottom: 10 }}>
+        <View style={styles.container}>
+            <View style={styles.inputContainer}>
                 <TextInput
-                    style={{
-                        borderWidth: 1,
-                        borderColor: "black",
-                        padding: 5,
-                        marginRight: 10,
-                    }}
+                    style={styles.input}
                     placeholder="Cell Width"
                     value={cellWidth}
                     onChangeText={setCellWidth}
                     keyboardType="numeric"
                 />
                 <TextInput
-                    style={{
-                        borderWidth: 1,
-                        borderColor: "black",
-                        padding: 5,
-                        marginRight: 10,
-                    }}
+                    style={styles.input}
                     placeholder="Cell Height"
                     value={cellHeight}
                     onChangeText={setCellHeight}
@@ -170,33 +120,58 @@ const App: React.FC = () => {
             >
                 {grid}
             </Rectangle>
-            <View
-                style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginTop: 10,
-                }}
-            >
-                <Text style={{ marginRight: 10 }}>Selected Color:</Text>
-                <TextInput
-                    style={{
-                        borderWidth: 1,
-                        borderColor: "black",
-                        padding: 5,
-                        marginTop: 10,
-                    }}
-                    value={selectedColor}
-                    editable={false}
-                />
+            <View style={styles.selectColorContainer}>
+                <Text style={styles.selectColorText}>Selected Color:</Text>
+                <Pressable onPress={copyToClipboard}>
+                    <TextInput
+                        style={styles.selectedColorInput}
+                        value={selectedColor}
+                        editable={false}
+                    />
+                </Pressable>
             </View>
 
             {errorMessage ? (
-                <Text style={{ color: "red", marginVertical: 10 }}>
-                    {errorMessage}
-                </Text>
+                <Text style={styles.errorMessage}>{errorMessage}</Text>
             ) : null}
         </View>
     );
 };
 
 export default App;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    inputContainer: {
+        flexDirection: "row",
+        marginBottom: 10,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "black",
+        padding: 5,
+        marginRight: 10,
+    },
+    selectColorContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 10,
+    },
+    selectColorText: {
+        marginRight: 10,
+    },
+    selectedColorInput: {
+        borderWidth: 1,
+        borderColor: "black",
+        padding: 5,
+        marginTop: 10,
+    },
+    errorMessage: {
+        color: "red",
+        marginVertical: 10,
+    },
+});
