@@ -11,6 +11,10 @@ Color Grid App is a React Native application that allows users to generate a gri
 -   View a message when a color is copied to the clipboard.
 -   Interactive interface with touch functionality for selecting colors.
 
+## Screenshot
+
+![Demo](https://github.com/mirsahib/tuliptech-grid/blob/master/screenshot/screenshot.gif)
+
 ## Video
 
 https://youtu.be/BiqIscLv5R4
