@@ -1,4 +1,4 @@
-# ToDoList Expo App
+# Tulip-Grid Expo App
 
 ## Description
 
